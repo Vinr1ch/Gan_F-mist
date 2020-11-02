@@ -1,11 +1,26 @@
-Name
-Purdue email
-Link to your git repo (make sure we all have access)
-List of resources used (links to websites used)
+Name: Colin Vinarcik
+Purdue email: cvinarci@purdue.edu
+Link to your git repo: https://github.com/Vinr1ch/cs390-lab3
+List of resources used
+https://stackoverflow.com/questions/26355313/plotting-multiple-plots-generated-inside-a-for-loop-on-the-same-axes-python - used for plotting of items
+
 List of parts of the lab completed
+[50] Complete the GAN to generate legible F-MNIST records. Generate from 3 classes.
+[10] Use a convnet for the GAN networks.
+[10] Implement the option to select the ratio of training between discriminator and generator.
+[10] Save a plot of loss over training steps for each network.
+
 Answer the questions:
 Describe the discriminator and generator.
+
+
 Why do we sometimes need to train the discriminator and generator different amounts?
+
+
 Include all hyperparameters
+
+
 Include a loss plot for the generator and discriminator
+
+
 Include all generated images

@@ -27,8 +27,8 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 # NOTE: mnist_d is no credit
 # NOTE: cifar_10 is extra credit
 #DATASET = "mnist_d"
-DATASET = "mnist_f"
-#DATASET = "cifar_10"
+#DATASET = "mnist_f"
+DATASET = "cifar_10"
 
 if DATASET == "mnist_d":
     IMAGE_SHAPE = (IH, IW, IZ) = (28, 28, 1)
@@ -48,6 +48,10 @@ elif DATASET == "cifar_10":
 IMAGE_SIZE = IH*IW*IZ
 
 NOISE_SIZE = 100    # length of noise array
+
+#currently set to 1:1 change values such that for every one 1 of something we have so many of the other.
+TRAIN_RATIO_G = 1   #values used to change for ratio generator
+TRAIN_RATIO_D = 1   #values used to change for ratio deiscriminator
 
 # file prefixes and directory
 OUTPUT_NAME = DATASET + "_" + LABEL
@@ -153,19 +157,32 @@ def buildGAN(images, epochs = 20000, batchSize = 32, loggingInterval = 0):
     trueCol = np.ones((batchSize, 1))
     falseCol = np.zeros((batchSize, 1))
     arr = []
+    arr2 = []
+    counter = 1
+
     for epoch in range(epochs):
 
         # Train discriminator with a true and false batch
-        batch = images[np.random.randint(0, images.shape[0], batchSize)]
-        noise = np.random.normal(0, 1, (batchSize, NOISE_SIZE))
-        genImages = generator.predict(noise)
-        advTrueLoss = adversary.train_on_batch(batch, trueCol)
-        advFalseLoss = adversary.train_on_batch(genImages, falseCol)
-        advLoss = np.add(advTrueLoss, advFalseLoss) * 0.5
+        if counter >= TRAIN_RATIO_G:
+            batch = images[np.random.randint(0, images.shape[0], batchSize)]
+            noise = np.random.normal(0, 1, (batchSize, NOISE_SIZE))
+            genImages = generator.predict(noise)
+            advTrueLoss = adversary.train_on_batch(batch, trueCol)
+            advFalseLoss = adversary.train_on_batch(genImages, falseCol)
+            advLoss = np.add(advTrueLoss, advFalseLoss) * 0.5
+            counter = 1
+        else:
+            counter = counter + 1
+
 
         # Train generator by training GAN while keeping adversary component constant
-        noise = np.random.normal(0, 1, (batchSize, NOISE_SIZE))
-        genLoss = gan.train_on_batch(noise, trueCol)
+        if counter >= TRAIN_RATIO_D:
+            noise = np.random.normal(0, 1, (batchSize, NOISE_SIZE))
+            genLoss = gan.train_on_batch(noise, trueCol)
+            counter = 1
+        else:
+            counter = counter + 1
+
 
         # Logging
         if loggingInterval > 0 and epoch % loggingInterval == 0:
@@ -176,16 +193,18 @@ def buildGAN(images, epochs = 20000, batchSize = 32, loggingInterval = 0):
             print("\t\tGenerator loss: %f." % genLoss)
             runGAN(generator, OUTPUT_DIR + "/" + OUTPUT_NAME + "_test_%d.png" % (epoch / loggingInterval))
             arr.append(genLoss)
+            arr2.append(advLoss[0])
 
     print(arr)
-    plt.plot(arr)
+    plt.plot(arr, label = "Generator Loss")
+    plt.plot(arr2, label = "Discriminator Loss")
     #plt.plot(epochs, loss_val, 'b', label='validation accuracy')
     plt.title('plot of loss')
     plt.xlabel('Epochs')
     plt.ylabel('Accuracy')
     plt.legend()
-    plt.show()
     plt.savefig(OUTPUT_NAME + '_test.pdf')
+    plt.show()
 
     return (generator, adversary, gan)
 
