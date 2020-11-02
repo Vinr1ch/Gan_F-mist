@@ -1,0 +1,11 @@
+Name
+Purdue email
+Link to your git repo (make sure we all have access)
+List of resources used (links to websites used)
+List of parts of the lab completed
+Answer the questions:
+Describe the discriminator and generator.
+Why do we sometimes need to train the discriminator and generator different amounts?
+Include all hyperparameters
+Include a loss plot for the generator and discriminator
+Include all generated images
