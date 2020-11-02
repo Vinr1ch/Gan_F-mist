@@ -3,6 +3,7 @@ Purdue email: cvinarci@purdue.edu
 Link to your git repo: https://github.com/Vinr1ch/cs390-lab3
 List of resources used
 https://stackoverflow.com/questions/26355313/plotting-multiple-plots-generated-inside-a-for-loop-on-the-same-axes-python - used for plotting of items
+https://developers.google.com/machine-learning/gan/generator - for question
 
 List of parts of the lab completed
 [50] Complete the GAN to generate legible F-MNIST records. Generate from 3 classes.
@@ -12,15 +13,50 @@ List of parts of the lab completed
 
 Answer the questions:
 Describe the discriminator and generator.
-
+The discriminator is a classifier and will try to tell the difference between real data and false data that is created by the generator.  The generator is used to create fake data for the discriminator and does so by using information from the discriminator.
 
 Why do we sometimes need to train the discriminator and generator different amounts?
-
+Most networks maintain a strict 1 to 1 ratio between the discriminator and the generator, meaning each run one every interaction of the loop.  With different ratios such as one to 5 where the generator will run once for every five discriminator iterations.  This can help improve our balance between our discriminator and generator.
 
 Include all hyperparameters
+TRAIN_RATIO_G = 1   #values used to change for ratio generator
+TRAIN_RATIO_D = 1   #values used to change for ratio deiscriminator
+epochs = 20000
+Activation functions: sigmoid tanh
+
+Layers:
+Discriminator
+    model = Sequential()
+    model.add(Flatten(input_shape = IMAGE_SHAPE))
+    model.add(Dense(512))
+    model.add(LeakyReLU(alpha = 0.2))
+    model.add(Dense(256))
+    model.add(LeakyReLU(alpha = 0.2))
+    model.add(Dense(1, activation = "sigmoid"))
+Generator
+    model = Sequential()
+    model.add(Dense(256, input_dim = NOISE_SIZE))
+    model.add(LeakyReLU(alpha = 0.2))
+    model.add(BatchNormalization(momentum = 0.8))
+    model.add(Dense(512))
+    model.add(LeakyReLU(alpha = 0.2))
+    model.add(BatchNormalization(momentum = 0.8))
+    model.add(Dense(1024))
+    model.add(LeakyReLU(alpha = 0.2))
+    model.add(BatchNormalization(momentum = 0.8))
+    model.add(Dense(IMAGE_SIZE, activation = "tanh"))
+    model.add(Reshape(IMAGE_SHAPE))
+
+
 
 
 Include a loss plot for the generator and discriminator
+mnist_f_top
+
+
+
+
+Mnist_f_sneaker
 
 
 Include all generated images
